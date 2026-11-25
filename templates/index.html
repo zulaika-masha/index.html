@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Guard — Web Security &amp; Threat Protection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css?v=3">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="#top" class="brand" aria-label="Cyber Guard Home">
+                <span class="brand-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                </span>
+                <span class="brand-text">
+                    <strong>Cyber Guard</strong>
+                    <small>Security Toolkit</small>
+                </span>
+            </a>
+
+            <nav class="main-nav" aria-label="Primary navigation">
+                <a href="#scanner">URL Scanner</a>
+                <a href="#password-checker">Password Checker</a>
+                <a href="#quiz">Cyber Safety Quiz</a>
+                <a href="#cyber-crime-info">Cyber Crime Info</a>
+            </nav>
+
+            <a
+                href="https://cybercrime.gov.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="nav-portal-btn"
+            >
+                Report Cyber Crime &#8599;
+            </a>
+        </div>
+    </header>
+
+    <main id="top">
+        <!-- Scam URL Scanner -->
+        <section id="scanner" class="hero-section">
+            <div class="container">
+                <div class="hero-copy">
+                    <span class="eyebrow">Phishing &amp; Threat Detection</span>
+                    <h1>Inspect Suspicious Links Before You Click</h1>
+                    <p class="hero-subtitle">
+                        Evaluate URLs in real time across protocol security, IP hosts, phishing keywords,
+                        shorteners, subdomains, and obfuscated encoding to surface hidden risks.
+                    </p>
+                </div>
+
+                <div class="scanner-card" role="region" aria-label="URL Scanner">
+                    <form id="scanForm" class="scan-form" novalidate>
+                        <label for="urlInput" class="sr-only">Website URL to scan</label>
+                        <div class="input-group">
+                            <span class="input-prefix" aria-hidden="true">URL</span>
+                            <input
+                                type="url"
+                                id="urlInput"
+                                name="url"
+                                placeholder="https://example.com/login or http://192.168.1.1/verify"
+                                autocomplete="off"
+                                spellcheck="false"
+                                required
+                            >
+                            <button type="button" id="clearBtn" class="btn-icon" title="Clear input" aria-label="Clear URL input">
+                                &times;
+                            </button>
+                        </div>
+                        <button type="submit" id="scanBtn" class="btn-primary">
+                            <span class="btn-label">Scan URL</span>
+                            <span class="btn-spinner" aria-hidden="true"></span>
+                        </button>
+                    </form>
+
+                    <div class="sample-bar">
+                        <span class="sample-label">Quick test URLs:</span>
+                        <button type="button" class="sample-chip chip-safe" data-url="https://www.wikipedia.org/wiki/Cybersecurity">
+                            Safe Link
+                        </button>
+                        <button type="button" class="sample-chip chip-warn" data-url="http://portal-login.example.com/account">
+                            Needs Verification
+                        </button>
+                        <button type="button" class="sample-chip chip-danger" data-url="http://192.168.1.45/secure-bank/login/verify-password?next=http://bit.ly/3demo">
+                            Suspicious Phishing URL
+                        </button>
+                    </div>
+
+                    <div id="errorBanner" class="error-banner hidden" role="alert"></div>
+
+                    <!-- Result Display -->
+                    <div id="resultPanel" class="result-panel hidden" aria-live="polite">
+                        <div class="result-header">
+                            <div class="score-gauge-wrap">
+                                <svg class="score-ring" viewBox="0 0 120 120" aria-hidden="true">
+                                    <circle class="ring-track" cx="60" cy="60" r="50"></circle>
+                                    <circle id="scoreArc" class="ring-fill" cx="60" cy="60" r="50"></circle>
+                                </svg>
+                                <div class="score-center">
+                                    <span id="scoreValue" class="score-number">0</span>
+                                    <span class="score-max">/ 100</span>
+                                </div>
+                            </div>
+
+                            <div class="result-summary">
+                                <div class="status-row">
+                                    <span id="statusBadge" class="status-badge">No Obvious Warning Signs</span>
+                                    <span id="engineTag" class="engine-tag">Security Engine</span>
+                                </div>
+                                <h2 id="result" class="result-title">Ready</h2>
+                                <p id="resultUrl" class="result-url"></p>
+                                <div id="resultMeta" class="result-meta"></div>
+                            </div>
+                        </div>
+
+                        <div class="result-columns">
+                            <div class="result-box">
+                                <h3>Warning Indicators</h3>
+                                <ul id="reasonsList" class="reasons-list"></ul>
+                            </div>
+                            <div class="result-box">
+                                <h3>7-Point Inspection Summary</h3>
+                                <div id="checksGrid" class="checks-grid"></div>
+                            </div>
+                        </div>
+
+                        <div class="report-inline-note">
+                            <span>Encountered a scam link or online fraud? Report it on the official Indian portal</span>
+                            <a href="https://cybercrime.gov.in/" target="_blank" rel="noopener noreferrer">cybercrime.gov.in &#8599;</a>
+                            <span>or call helpline <strong>1930</strong>.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risk Categories Legend -->
+                <div class="categories-strip">
+                    <div class="category-card cat-safe">
+                        <span class="cat-range">Score 0 – 19</span>
+                        <h3>No Obvious Warning Signs</h3>
+                        <p>No common heuristic red flags detected. Always verify unfamiliar senders before sharing credentials.</p>
+                    </div>
+                    <div class="category-card cat-warn">
+                        <span class="cat-range">Score 20 – 49</span>
+                        <h3>Needs Verification</h3>
+                        <p>Moderate risk signals such as unencrypted HTTP or sensitive keywords. Confirm the domain carefully.</p>
+                    </div>
+                    <div class="category-card cat-danger">
+                        <span class="cat-range">Score 50 – 100</span>
+                        <h3>Suspicious</h3>
+                        <p>High-risk phishing patterns detected (such as raw IP hosts, shorteners, or credential-bait keywords).</p>
+                    </div>
+                </div>
+
+                <!-- Session Scan History -->
+                <div id="historySection" class="history-card hidden">
+                    <div class="history-header">
+                        <h3>Recent URL Scans</h3>
+                        <button type="button" id="clearHistoryBtn" class="btn-text">Clear History</button>
+                    </div>
+                    <ul id="historyList" class="history-list"></ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Password Strength Checker -->
+        <section id="password-checker" class="section section-alt">
+            <div class="container">
+                <div class="section-heading">
+                    <span class="eyebrow">Credential Hygiene</span>
+                    <h2>Password Strength Checker</h2>
+                    <p>Test password resilience against brute-force attacks and common patterns. All checks run locally in your browser.</p>
+                </div>
+
+                <div class="tool-card password-grid">
+                    <div class="password-main">
+                        <label for="passwordInput" class="field-label">Enter a password to evaluate</label>
+                        <div class="password-input-row">
+                            <div class="input-group">
+                                <span class="input-prefix" aria-hidden="true">KEY</span>
+                                <input
+                                    type="password"
+                                    id="passwordInput"
+                                    placeholder="Type or generate a password..."
+                                    autocomplete="new-password"
+                                    spellcheck="false"
+                                >
+                                <button
+                                    type="button"
+                                    id="togglePasswordBtn"
+                                    class="btn-secondary-inline"
+                                    aria-label="Show password"
+                                    aria-pressed="false"
+                                >
+                                    Show
+                                </button>
+                            </div>
+                            <button type="button" id="generatePasswordBtn" class="btn-secondary">
+                                Generate Strong
+                            </button>
+                            <button type="button" id="copyPasswordBtn" class="btn-secondary" disabled>
+                                Copy
+                            </button>
+                        </div>
+
+                        <div class="strength-meter-block">
+                            <div class="strength-header">
+                                <span id="passwordStrengthBadge" class="status-badge status-neutral">Enter a password</span>
+                                <span id="passwordScoreText" class="strength-score">0 / 100</span>
+                            </div>
+                            <div class="strength-bars" aria-hidden="true">
+                                <span class="strength-segment" data-seg="1"></span>
+                                <span class="strength-segment" data-seg="2"></span>
+                                <span class="strength-segment" data-seg="3"></span>
+                                <span class="strength-segment" data-seg="4"></span>
+                            </div>
+                        </div>
+
+                        <div class="metrics-row">
+                            <div class="metric-tile">
+                                <span class="metric-label">Length</span>
+                                <strong id="pwLengthMetric" class="metric-value">0 chars</strong>
+                            </div>
+                            <div class="metric-tile">
+                                <span class="metric-label">Estimated Entropy</span>
+                                <strong id="pwEntropyMetric" class="metric-value">0 bits</strong>
+                            </div>
+                            <div class="metric-tile">
+                                <span class="metric-label">Brute-Force Estimate</span>
+                                <strong id="pwCrackMetric" class="metric-value">—</strong>
+                            </div>
+                        </div>
+
+                        <div class="advice-box">
+                            <h3>Recommendations</h3>
+                            <ul id="passwordAdviceList" class="advice-list">
+                                <li>Use at least 12 characters combining uppercase, lowercase, numbers, and symbols.</li>
+                            </ul>
+                        </div>
+
+                        <p class="privacy-note">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                            Evaluated 100% client-side — your password is never transmitted or stored.
+                        </p>
+                    </div>
+
+                    <aside class="password-checklist-panel" aria-label="Password security criteria">
+                        <h3>Security Criteria</h3>
+                        <ul id="passwordChecklist" class="pw-checklist">
+                            <li data-rule="length"><span class="rule-icon"></span>At least 12 characters</li>
+                            <li data-rule="upper"><span class="rule-icon"></span>Contains uppercase letters (A–Z)</li>
+                            <li data-rule="lower"><span class="rule-icon"></span>Contains lowercase letters (a–z)</li>
+                            <li data-rule="number"><span class="rule-icon"></span>Contains numbers (0–9)</li>
+                            <li data-rule="symbol"><span class="rule-icon"></span>Contains special symbols (!@#$%...)</li>
+                            <li data-rule="pattern"><span class="rule-icon"></span>No common words or sequential patterns</li>
+                        </ul>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cyber Safety Quiz -->
+        <section id="quiz" class="section">
+            <div class="container">
+                <div class="section-heading">
+                    <span class="eyebrow">Security Awareness</span>
+                    <h2>Cyber Safety Quiz</h2>
+                    <p>Test your ability to spot phishing traps, unsafe links, and social engineering tactics across 6 quick scenarios.</p>
+                </div>
+
+                <div class="tool-card quiz-card">
+                    <div id="quizPlayArea">
+                        <div class="quiz-top-bar">
+                            <span id="quizProgressLabel" class="quiz-step-pill">Question 1 of 6</span>
+                            <span id="quizScoreLabel" class="quiz-score-pill">Score: 0 / 6</span>
+                        </div>
+
+                        <div class="quiz-progress-track" aria-hidden="true">
+                            <div id="quizProgressFill" class="quiz-progress-fill"></div>
+                        </div>
+
+                        <h3 id="quizQuestionText" class="quiz-question"></h3>
+                        <div id="quizOptions" class="quiz-options" role="radiogroup" aria-labelledby="quizQuestionText"></div>
+
+                        <div id="quizFeedback" class="quiz-feedback hidden" aria-live="polite">
+                            <strong id="quizFeedbackTitle"></strong>
+                            <p id="quizFeedbackText"></p>
+                        </div>
+
+                        <div class="quiz-actions">
+                            <button type="button" id="quizNextBtn" class="btn-primary hidden">
+                                Next Question
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="quizResultArea" class="quiz-summary hidden" aria-live="polite">
+                        <span id="quizTierBadge" class="status-badge status-safe">Cyber Guardian</span>
+                        <h3 id="quizFinalHeadline">You scored 6 out of 6</h3>
+                        <p id="quizFinalMessage" class="quiz-final-text"></p>
+                        <div class="quiz-summary-stats">
+                            <div class="metric-tile">
+                                <span class="metric-label">Correct Answers</span>
+                                <strong id="quizCorrectCount" class="metric-value">0 / 6</strong>
+                            </div>
+                            <div class="metric-tile">
+                                <span class="metric-label">Accuracy</span>
+                                <strong id="quizAccuracyPct" class="metric-value">0%</strong>
+                            </div>
+                        </div>
+                        <button type="button" id="quizRestartBtn" class="btn-primary">
+                            Retake Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cyber Crime Information & Official Reporting Portal -->
+        <section id="cyber-crime-info" class="section section-alt">
+            <div class="container">
+                <div class="section-heading">
+                    <span class="eyebrow">Awareness &amp; Official Reporting</span>
+                    <h2>Understanding Cyber Crime &amp; How to Report It</h2>
+                    <p>
+                        Cyber crime covers any illegal activity carried out using computers, networks, or digital devices—ranging from
+                        phishing and financial scams to identity theft and online harassment.
+                    </p>
+                </div>
+
+                <!-- Official Portal Spotlight -->
+                <div class="portal-spotlight">
+                    <div class="portal-spotlight-copy">
+                        <span class="portal-badge">Official Government of India Portal · MHA / I4C</span>
+                        <h3>National Cyber Crime Reporting Portal</h3>
+                        <p>
+                            Managed by the Indian Cyber Crime Coordination Centre (I4C) under the Ministry of Home Affairs,
+                            <strong>cybercrime.gov.in</strong> enables citizens across India to report online financial fraud,
+                            phishing, social media abuse, and other cyber offenses, upload evidence, and track complaint status.
+                        </p>
+                        <div class="portal-actions">
+                            <a
+                                href="https://cybercrime.gov.in/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn-primary portal-cta"
+                            >
+                                Visit cybercrime.gov.in &#8599;
+                            </a>
+                            <div class="helpline-chip">
+                                <span class="helpline-label">Financial Fraud Helpline</span>
+                                <strong>Dial 1930</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="portal-steps-box">
+                        <h4>If You Are Targeted or Scammed</h4>
+                        <ol class="response-steps">
+                            <li><strong>Do not share OTPs or PINs:</strong> Disconnect immediately and change passwords on affected accounts.</li>
+                            <li><strong>Preserve evidence:</strong> Save the suspicious URL, screenshots, sender IDs, and transaction references.</li>
+                            <li><strong>Call 1930 immediately:</strong> For UPI, card, or bank fraud, rapid reporting helps freeze fraudulent transfers.</li>
+                            <li><strong>File online:</strong> Submit your complaint at <a href="https://cybercrime.gov.in/" target="_blank" rel="noopener noreferrer">cybercrime.gov.in</a> and keep the Acknowledgement Number.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Common Cyber Crime Categories -->
+                <div class="crime-grid">
+                    <article class="crime-card">
+                        <h3>Phishing &amp; Spoofed Sites</h3>
+                        <p>Fake emails, SMS alerts, or cloned websites imitating banks, courier services, or login pages to steal credentials and OTPs.</p>
+                    </article>
+                    <article class="crime-card">
+                        <h3>UPI &amp; Financial Fraud</h3>
+                        <p>Fraudulent collect requests, deceptive QR codes, screen-sharing scams, fake loan apps, and unauthorized card transactions.</p>
+                    </article>
+                    <article class="crime-card">
+                        <h3>Identity Theft &amp; Takeover</h3>
+                        <p>Misuse of personal documents, SIM-swap attacks, and compromised email or social media accounts used to defraud contacts.</p>
+                    </article>
+                    <article class="crime-card">
+                        <h3>Malware &amp; Ransomware</h3>
+                        <p>Malicious attachments, trojans, or pirated software that lock files for ransom, log keystrokes, or siphon saved passwords.</p>
+                    </article>
+                    <article class="crime-card">
+                        <h3>Online Harassment</h3>
+                        <p>Cyberstalking, fake impersonation profiles, blackmail/extortion, and non-consensual distribution of private content.</p>
+                    </article>
+                    <article class="crime-card">
+                        <h3>Tech Support &amp; Job Scams</h3>
+                        <p>Fake customer care numbers in search results, scareware pop-ups, or fraudulent job offers requesting upfront verification fees.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <p><strong>Cyber Guard</strong> — URL Threat Scanner · Password Analyzer · Cyber Safety Training</p>
+            <p class="disclaimer">
+                Official India Reporting: <a href="https://cybercrime.gov.in/" target="_blank" rel="noopener noreferrer">cybercrime.gov.in</a> · Helpline <strong>1930</strong>
+            </p>
+        </div>
+    </footer>
+
+    <script src="/static/script.js?v=3"></script>
+</body>
+</html>
